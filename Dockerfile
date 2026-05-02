@@ -1,6 +1,8 @@
 # Use a slim Python image
 FROM python:3.10-slim
 
+RUN apt-get update && apt-get install -y curl
+
 # Create a non-root user
 RUN useradd -m appuser
 
