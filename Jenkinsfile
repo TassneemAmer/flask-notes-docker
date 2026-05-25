@@ -5,7 +5,8 @@ pipeline {
 
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/TassneemAmer/flask-notes-docker.git'
+                git branch: 'main',
+                    url: 'https://github.com/TassneemAmer/flask-notes-docker.git'
             }
         }
 
