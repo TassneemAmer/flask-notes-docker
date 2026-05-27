@@ -94,8 +94,11 @@ def index():
         return redirect(url_for("index"))
 
     notes = fetch_all_notes()
-    return render_template("index.html", notes=notes)
-
+return render_template(
+    "index.html",
+    notes=notes,
+    deployment_message="🔥 AUTO CI/CD DEPLOYMENT SUCCESSFUL 🔥"
+)
 # -----------------------------
 # App entry point
 # -----------------------------
