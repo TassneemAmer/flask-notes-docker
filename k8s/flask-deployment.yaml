@@ -33,7 +33,10 @@ spec:
               value: root
 
             - name: DB_PASSWORD
-              value: rootpassword
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
 
             - name: DB_NAME
               value: notesdb
