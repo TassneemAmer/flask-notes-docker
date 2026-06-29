@@ -43,7 +43,23 @@ pipeline {
             steps {
                 sshagent(['k3s-ssh']) {
                     sh '''
-                    ssh -o StrictHostKeyChecking=no ec2-user@98.93.250.247 "
+                    echo "Finding k3s server..."
+                    
+                    IP=$(aws ec2 describe-instances \
+                        --filters \
+                            "Name=tag:Name,Values=k3s-server" \
+                            "Name=instance-state-name,Values=running" \
+                        --query "Reservations[*].Instances[*].PublicIpAddress" \
+                        --output text)
+
+                    if [ -z "$IP" ] || [ "$IP" = "None" ]; then
+                        echo "ERROR: No running k3s-server instance found."
+                        exit 1
+                    fi
+
+                    echo "Deploying to $IP"
+                    
+                    ssh -o StrictHostKeyChecking=no ec2-user@$IP "
                         kubectl rollout restart deployment/flask-deployment &&
                         kubectl rollout status deployment/flask-deployment
                     "
@@ -56,6 +72,13 @@ pipeline {
     post {
         always {
             sh 'docker logout || true'
+        }
+        success {
+            echo 'Deployment completed successfully.'
+        }
+
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
