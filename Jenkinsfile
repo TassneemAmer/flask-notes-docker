@@ -46,6 +46,7 @@ pipeline {
                     echo "Finding k3s server..."
                     
                     IP=$(aws ec2 describe-instances \
+                        --region us-east-1 \
                         --filters \
                             "Name=tag:Name,Values=k3s-server" \
                             "Name=instance-state-name,Values=running" \
