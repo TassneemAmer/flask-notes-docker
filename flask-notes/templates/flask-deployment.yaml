@@ -21,6 +21,7 @@ spec:
         - name: flask-app
 
           image: tassneem03/flask-notes-app:v1
+          imagePullPolicy: Always
 
           ports:
             - containerPort: 5000
