@@ -289,36 +289,6 @@ kubectl get secret monitoring-grafana \
 
 ---
 
-# Screenshots
-
-## CI/CD Pipeline
-
-<img width="1912" height="866" alt="Screenshot 2026-07-06 174013" src="https://github.com/user-attachments/assets/ad24ba99-23e0-4c24-ab17-800c3dd54029" />
-<img width="1912" height="511" alt="Screenshot 2026-07-06 173925" src="https://github.com/user-attachments/assets/616573e7-368e-4a29-862a-41d78c24bf32" />
-<img width="1918" height="822" alt="Screenshot 2026-07-06 173935" src="https://github.com/user-attachments/assets/ae80e130-dba0-4da6-aa1e-ee665be578a7" />
-<img width="1906" height="902" alt="Screenshot 2026-07-06 173955" src="https://github.com/user-attachments/assets/f04aa2a2-4a96-4d66-a660-0b8b0461f5db" />
-
-
----
-
-## Kubernetes
-
-*(Add kubectl get pods and services screenshots here)*
-
----
-
-## Grafana Dashboards
-
-*(Add your monitoring dashboard screenshots here)*
-
----
-
-## Application
-
-*(Add screenshots of the running Notes application here)*
-
----
-
 # Skills Demonstrated
 
 - DevOps
