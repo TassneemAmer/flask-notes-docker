@@ -293,7 +293,11 @@ kubectl get secret monitoring-grafana \
 
 ## CI/CD Pipeline
 
-*(Add Jenkins pipeline screenshots here)*
+<img width="1912" height="866" alt="Screenshot 2026-07-06 174013" src="https://github.com/user-attachments/assets/ad24ba99-23e0-4c24-ab17-800c3dd54029" />
+<img width="1912" height="511" alt="Screenshot 2026-07-06 173925" src="https://github.com/user-attachments/assets/616573e7-368e-4a29-862a-41d78c24bf32" />
+<img width="1918" height="822" alt="Screenshot 2026-07-06 173935" src="https://github.com/user-attachments/assets/ae80e130-dba0-4da6-aa1e-ee665be578a7" />
+<img width="1906" height="902" alt="Screenshot 2026-07-06 173955" src="https://github.com/user-attachments/assets/f04aa2a2-4a96-4d66-a660-0b8b0461f5db" />
+
 
 ---
 
@@ -356,6 +360,3 @@ Junior DevOps Engineer
 LinkedIn: https://www.linkedin.com/in/tassneem-amer/
 
 GitHub: https://github.com/TassneemAmer<img width="1912" height="866" alt="Screenshot 2026-07-06 174013" src="https://github.com/user-attachments/assets/c7df42b3-4329-4c75-b3fe-34429a57a280" />
-<img width="1912" height="511" alt="Screenshot 2026-07-06 173925" src="https://github.com/user-attachments/assets/e4a67f19-96d1-417a-9479-672f4d6c792a" />
-<img width="1918" height="822" alt="Screenshot 2026-07-06 173935" src="https://github.com/user-attachments/assets/89c0976d-f79e-4604-9658-3619b1b66909" />
-<img width="1906" height="902" alt="Screenshot 2026-07-06 173955" src="https://github.com/user-attachments/assets/4d276c69-1ab0-478f-8063-bc7a3ae98834" />
