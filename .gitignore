@@ -2,3 +2,20 @@
 .venv
 __pycache__/
 *.pyc
+
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Terraform plans
+*.tfplan
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
