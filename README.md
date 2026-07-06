@@ -1,230 +1,361 @@
-# Flask Notes App — Docker Compose
+# End-to-End DevOps CI/CD Pipeline for Flask Notes Application
 
-A simple note-taking web application built with **Python (Flask)** and **MySQL**, containerized using **Docker** and orchestrated with **Docker Compose**.
+A production-style DevOps project demonstrating the complete software delivery lifecycle from source code to automated deployment on Kubernetes.
 
-The project provides a fully reproducible development environment that can be started with a single command.
-
-## 🚀 Features
-
-* Web UI to add and view notes
-* REST API to create and list notes
-* Notes stored persistently in MySQL
-* Health check endpoint for readiness
-* Docker Compose orchestration
-* Environment-based configuration
-* Non-root web container
+The project automates application build, testing, containerization, image publishing, and deployment using Jenkins, Docker, Kubernetes (k3s), Helm, and AWS. It also includes infrastructure monitoring with Prometheus and Grafana.
 
 ---
 
-## 🛠 Technologies Used
+# Architecture
 
-* Python 3.10+
-* Flask
-* MySQL 8.x
-* Docker
-* Docker Compose v2
+```
+                Git Push
+                   │
+                   ▼
+              GitHub Repository
+                   │
+             GitHub Webhook
+                   │
+                   ▼
+          Jenkins CI/CD Pipeline
+                   │
+        ┌──────────┴──────────┐
+        │                     │
+        ▼                     ▼
+ Docker Image Build     Kubernetes Deployment
+        │                     │
+        ▼                     ▼
+    Docker Hub         k3s Cluster (AWS EC2)
+                             │
+      ┌──────────────────────┼────────────────────────┐
+      │                      │                        │
+      ▼                      ▼                        ▼
+ Flask Notes App         MySQL Database          NGINX
+      │
+      ▼
+ Prometheus Metrics
+      │
+      ▼
+ Grafana Dashboards
+```
 
 ---
 
-## 📁 Project Structure
+# Features
 
+- Automated CI/CD pipeline using Jenkins
+- GitHub webhook triggers deployments automatically
+- Dockerized Flask application
+- Image publishing to Docker Hub
+- Kubernetes deployment using k3s
+- Helm-managed Kubernetes releases
+- Persistent MySQL storage
+- NGINX reverse proxy
+- Self-healing Kubernetes workloads
+- Prometheus monitoring
+- Grafana dashboards
+- Environment-based configuration
+- Non-root application container
+
+---
+
+# Tech Stack
+
+## Cloud
+
+- AWS EC2
+- Elastic IP
+
+## CI/CD
+
+- Jenkins
+- GitHub Webhooks
+
+## Containers
+
+- Docker
+- Docker Hub
+
+## Orchestration
+
+- Kubernetes (k3s)
+- Helm
+
+## Monitoring
+
+- Prometheus
+- Grafana
+
+## Backend
+
+- Python
+- Flask
+- MySQL
+
+## Operating System
+
+- Amazon Linux
+- Linux CLI
+
+---
+
+# Project Structure
+
+```
 .
 ├── app/
-│   ├── app.py
-│   ├── templates/
-│   │   └── index.html
-│   └── static/
 ├── db/
-│   └── init/
-│       └── 01_init.sql
+├── flask-notes/          # Helm Chart
+├── k8s/                  # Kubernetes manifests
+├── Jenkinsfile
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
 ├── .env.example
-├── .env            # local only, not committed
 └── README.md
+```
 
 ---
 
-## ⚙️ Configuration
+# CI/CD Pipeline
 
-All configuration is done using environment variables.
+Every push to the GitHub repository automatically triggers Jenkins.
 
-A sample file is provided:
+Pipeline stages:
 
-.env.example
+1. Checkout source code
+2. Build Docker image
+3. Login to Docker Hub
+4. Push image
+5. Connect to Kubernetes server via SSH
+6. Restart Kubernetes deployment
+7. Wait for successful rollout
 
-To run the project locally, create a `.env` file based on `.env.example`:
+---
 
-```env
-MYSQL_ROOT_PASSWORD=rootpassword
-MYSQL_DATABASE=notesdb
-MYSQL_USER=notesuser
-MYSQL_PASSWORD=notespassword
+# Kubernetes Deployment
 
-DB_HOST=db
-DB_NAME=notesdb
-DB_USER=notesuser
-DB_PASSWORD=notespassword
-```
+The application runs inside a single-node k3s cluster hosted on AWS EC2.
 
-> ⚠️ Do not commit the `.env` file.
+Components include:
 
-## ▶️ How to Run the Application
+- Flask Deployment
+- Flask Service
+- MySQL Deployment
+- MySQL Service
+- NGINX Deployment
+- NGINX Service
+- Persistent Volume
+- Persistent Volume Claim
 
-### Prerequisites
+Kubernetes automatically restarts failed containers and maintains the desired application state.
 
-* Docker Desktop installed and running
-* Docker Compose v2
+---
 
-### Start the stack
+# Helm
+
+The project includes a reusable Helm chart that packages the complete application.
+
+Helm manages:
+
+- Deployments
+- Services
+- Persistent Storage
+- Configuration values
+
+Deployment is simplified to a single Helm release.
+
+---
+
+# Monitoring
+
+Monitoring is implemented using the kube-prometheus-stack Helm chart.
+
+Installed components include:
+
+- Prometheus
+- Grafana
+- Alertmanager
+- Node Exporter
+- kube-state-metrics
+- Prometheus Operator
+
+Grafana dashboards provide real-time monitoring for:
+
+- CPU Usage
+- Memory Usage
+- Network Traffic
+- Pod Health
+- Workload Metrics
+- Cluster Metrics
+
+---
+
+# Infrastructure
+
+AWS Resources:
+
+- Jenkins EC2 Instance
+- k3s Kubernetes EC2 Instance
+- Elastic IP
+- Security Groups
+
+---
+
+# Application Features
+
+- Create notes
+- View notes
+- REST API
+- MySQL persistent storage
+- Health check endpoint
+
+---
+
+# Running Locally
+
+## Docker Compose
 
 ```bash
 docker compose up --build
 ```
 
-This will:
+Application:
 
-* Start a MySQL container
-* Initialize the database and tables
-* Start the Flask web application
-
-### Access the app
-
-Open your browser and go to:
-
-<http://localhost:8080>
+```
+http://localhost:8080
+```
 
 ---
 
-## 🧪 Testing the Application
+# Kubernetes Deployment
 
-### Web UI
-
-1. Open the homepage
-2. Enter a note (e.g., “Buy milk”)
-3. Click **Add Note**
-4. The note appears in the list (most recent first)
-
----
-
-### API Endpoints
-
-#### Create a note
+Apply manifests:
 
 ```bash
-curl -X POST http://localhost:8080/notes \
-  -H "Content-Type: application/json" \
-  -d '{"content":"Buy milk"}'
+kubectl apply -f k8s/
 ```
 
-Response:
-
-```json
-{
-  "message": "Note created"
-}
-```
-
----
-
-#### List notes
+or install using Helm:
 
 ```bash
-curl http://localhost:8080/notes
-```
-
-Response example:
-
-```json
-[
-  {
-    "id": 1,
-    "content": "docker project check",
-    "created_at": "2026-02-16 23:44:45"
-  }
-]
+helm install flask-notes ./flask-notes
 ```
 
 ---
 
-#### Health check
+# Monitoring
+
+Install monitoring stack:
 
 ```bash
-curl http://localhost:8080/healthz
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+helm repo update
+
+kubectl create namespace monitoring
+
+helm install monitoring prometheus-community/kube-prometheus-stack \
+--namespace monitoring
 ```
 
-Returns `200 OK` only when the database is reachable.
-
----
-
-## 💾 Data Persistence
-
-MySQL data is stored in a **named Docker volume**.
-
-Stopping and restarting containers will **not** delete notes.
-
----
-
-## 🧹 How to Stop and Clean Up
-
-### Stop containers
+Expose Grafana:
 
 ```bash
-docker compose down
+kubectl patch svc monitoring-grafana \
+-n monitoring \
+-p '{"spec":{"type":"NodePort"}}'
 ```
 
-### Stop and remove database data
+Access Grafana:
+
+```
+http://<EC2_PUBLIC_IP>:<NODE_PORT>
+```
+
+Default username:
+
+```
+admin
+```
+
+Password:
 
 ```bash
-docker compose down -v
+kubectl get secret monitoring-grafana \
+-n monitoring \
+-o jsonpath="{.data.admin-password}" | base64 --decode
 ```
 
-> ⚠️ This will delete all stored notes.
+---
+
+# Screenshots
+
+## CI/CD Pipeline
+
+*(Add Jenkins pipeline screenshots here)*
 
 ---
 
-## 🔐 Security Notes
+## Kubernetes
 
-* No secrets are committed to the repository
-* All credentials are injected via environment variables
-* The Flask container runs as a **non-root user**
+*(Add kubectl get pods and services screenshots here)*
 
 ---
 
-## 🧩 Architecture Overview
+## Grafana Dashboards
 
-Browser
-   |
-   v
-Flask Web App (container: web)
-   |
-   v
-MySQL Database (container: db)
-   |
-   v
-Named Docker Volume (persistent storage)
+*(Add your monitoring dashboard screenshots here)*
 
 ---
 
-## ✅ Acceptance Criteria Coverage
+## Application
 
-* One-command startup ✔
-* Persistent MySQL storage ✔
-* Health checks implemented ✔
-* Environment-based configuration ✔
-* Non-root web container ✔
-* Clear documentation ✔
+*(Add screenshots of the running Notes application here)*
 
 ---
 
-## 📌 Notes
+# Skills Demonstrated
 
-This project is intended as a **development setup** using Docker Compose.
-It is not deployed to the internet and does not include production hardening.
+- DevOps
+- CI/CD
+- Jenkins
+- Docker
+- Docker Hub
+- Kubernetes
+- Helm
+- AWS
+- Linux
+- Git
+- GitHub Webhooks
+- Infrastructure Monitoring
+- Prometheus
+- Grafana
+- MySQL
+- Flask
 
 ---
 
-## 👤 Author
+# Future Improvements
 
-Tassneem Amer
+- Terraform Infrastructure as Code
+- Argo CD GitOps
+- HTTPS with Ingress Controller
+- Application Metrics
+- Automated Testing
+- Horizontal Pod Autoscaling
+
+---
+
+# Author
+
+**Tassneem Amer**
+
+Junior DevOps Engineer
+
+LinkedIn: https://www.linkedin.com/in/tassneem-amer/
+
+GitHub: https://github.com/TassneemAmer<img width="1912" height="866" alt="Screenshot 2026-07-06 174013" src="https://github.com/user-attachments/assets/c7df42b3-4329-4c75-b3fe-34429a57a280" />
+<img width="1912" height="511" alt="Screenshot 2026-07-06 173925" src="https://github.com/user-attachments/assets/e4a67f19-96d1-417a-9479-672f4d6c792a" />
+<img width="1918" height="822" alt="Screenshot 2026-07-06 173935" src="https://github.com/user-attachments/assets/89c0976d-f79e-4604-9658-3619b1b66909" />
+<img width="1906" height="902" alt="Screenshot 2026-07-06 173955" src="https://github.com/user-attachments/assets/4d276c69-1ab0-478f-8063-bc7a3ae98834" />
