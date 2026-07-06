@@ -149,6 +149,8 @@ fi
 
 cd flask-notes-docker/flask-notes
 
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
 helm upgrade --install flask-notes .
 
 echo "Waiting for deployments..."
