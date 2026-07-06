@@ -329,4 +329,4 @@ Junior DevOps Engineer
 
 LinkedIn: https://www.linkedin.com/in/tassneem-amer/
 
-GitHub: https://github.com/TassneemAmer<img width="1912" height="866" alt="Screenshot 2026-07-06 174013" src="https://github.com/user-attachments/assets/c7df42b3-4329-4c75-b3fe-34429a57a280" />
+GitHub: https://github.com/TassneemAmer
