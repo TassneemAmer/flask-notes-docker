@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-    IMAGE_REPO = "tassneem03/flask-notes-app"
-    IMAGE_TAG = "${BUILD_NUMBER}"
+        IMAGE_REPO = "tassneem03/flask-notes-app"
+        IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                sh 'docker build -t $IMAGE_REPO:$IMAGE_TAG .'
             }
         }
 
@@ -28,7 +28,7 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                     '''
                 }
             }
@@ -36,35 +36,42 @@ pipeline {
 
         stage('Push Image') {
             steps {
-                sh 'docker build -t $IMAGE_REPO:$IMAGE_TAG .'
+                sh 'docker push $IMAGE_REPO:$IMAGE_TAG'
             }
         }
 
-        stage('Deploy to k3s') {
+        stage('Update Helm Chart') {
             steps {
-                sshagent(['k3s-ssh']) {
+                sh '''
+                    sed -i "s/tag:.*/tag: \\"${IMAGE_TAG}\\"/" flask-notes/values.yaml
+                '''
+            }
+        }
+
+        stage('Commit Helm Changes') {
+            steps {
+                sh '''
+                    git config user.name "Jenkins"
+                    git config user.email "jenkins@local"
+
+                    git add flask-notes/values.yaml
+
+                    git commit -m "Update image tag to ${IMAGE_TAG}" || true
+                '''
+            }
+        }
+
+        stage('Push Helm Changes') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'github',
+                    usernameVariable: 'GIT_USER',
+                    passwordVariable: 'GIT_TOKEN'
+                )]) {
                     sh '''
-                    echo "Finding k3s server..."
-                    
-                    IP=$(aws ec2 describe-instances \
-                        --region us-east-1 \
-                        --filters \
-                            "Name=tag:Name,Values=k3s-server" \
-                            "Name=instance-state-name,Values=running" \
-                        --query "Reservations[*].Instances[*].PublicIpAddress" \
-                        --output text)
+                        git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/TassneemAmer/flask-notes-docker.git
 
-                    if [ -z "$IP" ] || [ "$IP" = "None" ]; then
-                        echo "ERROR: No running k3s-server instance found."
-                        exit 1
-                    fi
-
-                    echo "Deploying to $IP"
-                    
-                    ssh -o StrictHostKeyChecking=no ec2-user@$IP "
-                        kubectl rollout restart deployment/flask-deployment &&
-                        kubectl rollout status deployment/flask-deployment
-                    "
+                        git push origin HEAD:main
                     '''
                 }
             }
@@ -75,8 +82,9 @@ pipeline {
         always {
             sh 'docker logout || true'
         }
+
         success {
-            echo 'Deployment completed successfully.'
+            echo 'CI pipeline completed successfully. Argo CD will deploy the new version.'
         }
 
         failure {
