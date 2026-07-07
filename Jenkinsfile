@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "tassneem03/flask-notes-app:v1"
+    IMAGE_REPO = "tassneem03/flask-notes-app"
+    IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -35,7 +36,7 @@ pipeline {
 
         stage('Push Image') {
             steps {
-                sh 'docker push $IMAGE_NAME'
+                sh 'docker build -t $IMAGE_REPO:$IMAGE_TAG .'
             }
         }
 
