@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_REPO = "tassneem03/flask-notes-app"
-        IMAGE_TAG = "v${BUILD_NUMBER}"
+        IMAGE_TAG  = "v${BUILD_NUMBER}"
     }
 
     stages {
@@ -14,9 +14,29 @@ pipeline {
             }
         }
 
+        stage('Skip Jenkins Commits') {
+            steps {
+                script {
+                    def author = sh(
+                        script: "git log -1 --pretty=%an",
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Latest commit author: ${author}"
+
+                    if (author == "Jenkins") {
+                        currentBuild.description = "Triggered by Jenkins commit"
+                        error("Skipping build triggered by Jenkins commit.")
+                    }
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_REPO:$IMAGE_TAG .'
+                sh '''
+                    docker build -t $IMAGE_REPO:$IMAGE_TAG .
+                '''
             }
         }
 
@@ -28,15 +48,19 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        echo "$DOCKER_PASS" | docker login \
+                        -u "$DOCKER_USER" \
+                        --password-stdin
                     '''
                 }
             }
         }
 
-        stage('Push Image') {
+        stage('Push Docker Image') {
             steps {
-                sh 'docker push $IMAGE_REPO:$IMAGE_TAG'
+                sh '''
+                    docker push $IMAGE_REPO:$IMAGE_TAG
+                '''
             }
         }
 
@@ -56,7 +80,11 @@ pipeline {
 
                     git add flask-notes/values.yaml
 
-                    git diff --cached --quiet || git commit -m "Update image tag to ${IMAGE_TAG}"
+                    if ! git diff --cached --quiet; then
+                        git commit -m "Update image tag to ${IMAGE_TAG}"
+                    else
+                        echo "No changes to commit."
+                    fi
                 '''
             }
         }
@@ -68,9 +96,12 @@ pipeline {
                     usernameVariable: 'GIT_USER',
                     passwordVariable: 'GIT_TOKEN'
                 )]) {
+
                     sh '''
                         git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/TassneemAmer/flask-notes-docker.git
+
                         git pull --rebase origin main
+
                         git push origin HEAD:main
                     '''
                 }
@@ -79,16 +110,21 @@ pipeline {
     }
 
     post {
-        always {
-            sh 'docker logout || true'
-        }
 
         success {
-            echo 'CI pipeline completed successfully. Argo CD will deploy the new version.'
+            echo "Docker image ${IMAGE_TAG} built successfully."
+            echo "Helm chart updated."
+            echo "Changes pushed to GitHub."
+            echo "Argo CD will synchronize automatically."
         }
 
         failure {
-            echo 'Pipeline failed.'
+            echo "Pipeline failed or was intentionally skipped."
+        }
+
+        always {
+            sh 'docker logout || true'
+            cleanWs()
         }
     }
 }
