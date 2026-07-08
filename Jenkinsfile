@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_REPO = "tassneem03/flask-notes-app"
-        IMAGE_TAG  = "v${BUILD_NUMBER}"
+        IMAGE_TAG = "v${BUILD_NUMBER}"
     }
 
     stages {
@@ -14,7 +14,7 @@ pipeline {
             }
         }
 
-        stage('Skip Jenkins Commits') {
+        stage('Skip Jenkins Commit') {
             steps {
                 script {
                     def author = sh(
@@ -25,14 +25,18 @@ pipeline {
                     echo "Latest commit author: ${author}"
 
                     if (author == "Jenkins") {
-                        currentBuild.description = "Triggered by Jenkins commit"
-                        error("Skipping build triggered by Jenkins commit.")
+                        currentBuild.result = 'NOT_BUILT'
+                        echo "Build triggered by Jenkins commit. Skipping pipeline."
+                        return
                     }
                 }
             }
         }
 
         stage('Build Docker Image') {
+            when {
+                expression { currentBuild.result != 'NOT_BUILT' }
+            }
             steps {
                 sh '''
                     docker build -t $IMAGE_REPO:$IMAGE_TAG .
@@ -41,6 +45,9 @@ pipeline {
         }
 
         stage('Login to Docker Hub') {
+            when {
+                expression { currentBuild.result != 'NOT_BUILT' }
+            }
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub',
@@ -57,6 +64,9 @@ pipeline {
         }
 
         stage('Push Docker Image') {
+            when {
+                expression { currentBuild.result != 'NOT_BUILT' }
+            }
             steps {
                 sh '''
                     docker push $IMAGE_REPO:$IMAGE_TAG
@@ -65,6 +75,9 @@ pipeline {
         }
 
         stage('Update Helm Chart') {
+            when {
+                expression { currentBuild.result != 'NOT_BUILT' }
+            }
             steps {
                 sh '''
                     sed -i "s/tag:.*/tag: \\"${IMAGE_TAG}\\"/" flask-notes/values.yaml
@@ -73,6 +86,9 @@ pipeline {
         }
 
         stage('Commit Helm Changes') {
+            when {
+                expression { currentBuild.result != 'NOT_BUILT' }
+            }
             steps {
                 sh '''
                     git config user.name "Jenkins"
@@ -90,6 +106,9 @@ pipeline {
         }
 
         stage('Push Helm Changes') {
+            when {
+                expression { currentBuild.result != 'NOT_BUILT' }
+            }
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'github',
@@ -113,18 +132,23 @@ pipeline {
 
         success {
             echo "Docker image ${IMAGE_TAG} built successfully."
-            echo "Helm chart updated."
+            echo "Helm chart updated successfully."
             echo "Changes pushed to GitHub."
             echo "Argo CD will synchronize automatically."
         }
 
-        failure {
-            echo "Pipeline failed or was intentionally skipped."
+        unsuccessful {
+            script {
+                if (currentBuild.result == 'NOT_BUILT') {
+                    echo "Pipeline skipped because it was triggered by a Jenkins-generated commit."
+                } else {
+                    echo "Pipeline failed."
+                }
+            }
         }
 
         always {
             sh 'docker logout || true'
-            cleanWs()
         }
     }
 }
