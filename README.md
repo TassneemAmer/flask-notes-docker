@@ -62,7 +62,7 @@ Developer                            │
 
 # 🛠 Tech Stack
 
-| Layer               | Technology       | <img width="1536" height="1024" alt="ChatGPT Image Jul 8, 2026, 02_47_52 PM" src="https://github.com/user-attachments/assets/7dbb62d5-efe3-42cd-881f-e8ba9a3ab7e2" />
+| Layer               | Technology       | 
 
 | ------------------- | ---------------- |
 | ☁️ Cloud            | AWS EC2          |
@@ -78,6 +78,7 @@ Developer                            │
 | 🌐 Backend          | Flask            |
 | 🗄 Database         | MySQL            |
 | 🔀 Reverse Proxy    | Nginx            |
+<img width="1536" height="1024" alt="ChatGPT Image Jul 8, 2026, 02_47_52 PM" src="https://github.com/user-attachments/assets/df5aaaf2-4a84-4206-9823-05948885a475" />
 
 ---
 
