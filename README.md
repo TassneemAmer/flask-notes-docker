@@ -57,13 +57,13 @@ Developer                            │
                               ▼
                            Grafana
 ```
-<img width="1536" height="1024" alt="ChatGPT Image Jul 8, 2026, 02_47_52 PM" src="https://github.com/user-attachments/assets/6e49e726-fda9-43f6-9e13-cefaa7570d06" />
 
 ---
 
 # 🛠 Tech Stack
 
-| Layer               | Technology       |
+| Layer               | Technology       | <img width="1536" height="1024" alt="ChatGPT Image Jul 8, 2026, 02_47_52 PM" src="https://github.com/user-attachments/assets/7dbb62d5-efe3-42cd-881f-e8ba9a3ab7e2" />
+
 | ------------------- | ---------------- |
 | ☁️ Cloud            | AWS EC2          |
 | 🏗 Infrastructure   | Terraform        |
