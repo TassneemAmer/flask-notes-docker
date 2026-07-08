@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_REPO = "tassneem03/flask-notes-app"
-        IMAGE_TAG = "${BUILD_NUMBER}"
+        IMAGE_TAG = "v${BUILD_NUMBER}"
     }
 
     stages {
