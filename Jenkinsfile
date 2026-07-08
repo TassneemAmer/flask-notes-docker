@@ -56,7 +56,7 @@ pipeline {
 
                     git add flask-notes/values.yaml
 
-                    git commit -m "Update image tag to ${IMAGE_TAG}" || true
+                    git diff --cached --quiet || git commit -m "Update image tag to ${IMAGE_TAG}"
                 '''
             }
         }
@@ -70,7 +70,7 @@ pipeline {
                 )]) {
                     sh '''
                         git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/TassneemAmer/flask-notes-docker.git
-
+                        git pull --rebase origin main
                         git push origin HEAD:main
                     '''
                 }
