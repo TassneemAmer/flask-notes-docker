@@ -57,6 +57,7 @@ Developer                            │
                               ▼
                            Grafana
 ```
+<img width="1536" height="1024" alt="ChatGPT Image Jul 8, 2026, 02_47_52 PM" src="https://github.com/user-attachments/assets/6e49e726-fda9-43f6-9e13-cefaa7570d06" />
 
 ---
 
@@ -144,6 +145,7 @@ Application Source
         ▼
    Docker Hub
 ```
+<img width="1877" height="908" alt="image" src="https://github.com/user-attachments/assets/466676f7-a196-417f-9c2a-82c03796ada3" />
 
 The Flask application is containerized using Docker to ensure a consistent runtime environment across development and production. Jenkins automatically builds and pushes updated images to Docker Hub whenever changes are committed.
 
@@ -170,6 +172,7 @@ Developer
  ├── Push to Docker Hub
  └── Deploy to Kubernetes
 ```
+<img width="1863" height="896" alt="image" src="https://github.com/user-attachments/assets/cde9921e-6425-4e27-94a4-2d824447e8d7" />
 
 Jenkins automates the entire deployment process, eliminating manual build and deployment steps while ensuring every release follows the same repeatable workflow.
 
@@ -277,6 +280,14 @@ Prometheus collects metrics from the Kubernetes cluster, while Grafana visualize
 * Expand Grafana dashboards and alerting
 
 ---
+## Repository Statistics
+
+- Infrastructure as Code using Terraform
+- Complete CI/CD Pipeline
+- GitOps Workflow
+- Kubernetes Deployment
+- Cloud Deployment on AWS
+- Real-Time Monitoring with Prometheus & Grafana
 
 # 👩‍💻 Author
 
