@@ -2,177 +2,246 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Flask Notes App after databases deleted</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Notes</title>
 
     <style>
-    body {
-        background: linear-gradient(135deg, #0f172a, #1e293b); 
-        font-family: Arial, sans-serif;
-        margin: 40px;
-        color: white;
-    }
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
 
-    h1 {
-        color: #38bdf8;
-        font-size: 48px;
-        text-align: center;
-        text-shadow: 0 0 15px #38bdf8;
-    }
+        body{
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg,#0f172a,#1e293b,#0f172a);
+            color:#f8fafc;
+            min-height:100vh;
+            padding:40px 20px;
+        }
 
-    h2 {
-        color: #facc15;
-        margin-top: 40px;
-    }
+        .container{
+            max-width:900px;
+            margin:auto;
+        }
 
-    form {
-        background-color: rgba(255,255,255,0.08);
-        padding: 20px;
-        border-radius: 16px;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 0 20px rgba(0,0,0,0.3);
-    }
+        .header{
+            text-align:center;
+            margin-bottom:35px;
+        }
 
-    textarea {
-        width: 100%;
-        border: none;
-        border-radius: 12px;
-        padding: 15px;
-        font-size: 16px;
-        background-color: #8bfa87;
-    }
+        .status{
+            display:inline-block;
+            background:#16a34a;
+            color:white;
+            padding:8px 18px;
+            border-radius:999px;
+            font-size:14px;
+            letter-spacing:.5px;
+            margin-bottom:15px;
+        }
 
-    button {
-        background: linear-gradient(90deg, #06b6d4, #3b82f6);
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: bold;
-        transition: 0.3s;
-    }
+        h1{
+            font-size:52px;
+            color:#38bdf8;
+            margin-bottom:12px;
+        }
 
-    button:hover {
-        transform: scale(1.08);
-        box-shadow: 0 0 20px #38bdf8;
-    }
+        .subtitle{
+            color:#cbd5e1;
+            font-size:18px;
+        }
 
-    ul {
-        list-style: none;
-        padding: 0;
-    }
+        .card{
+            background:rgba(255,255,255,.06);
+            backdrop-filter:blur(12px);
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:20px;
+            padding:28px;
+            margin-bottom:30px;
+            box-shadow:0 15px 35px rgba(0,0,0,.35);
+        }
 
-    li {
-        background-color: rgba(255,255,255,0.08);
-        padding: 15px;
-        margin-bottom: 15px;
-        border-radius: 14px;
-        border-left: 5px solid #38bdf8;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
+        .card h2{
+            color:#facc15;
+            margin-bottom:12px;
+        }
 
-    strong {
-        color: #facc15;
-    }
+        .card p{
+            color:#dbe4ef;
+            line-height:1.7;
+            margin-bottom:10px;
+        }
 
-    hr {
-        border: 1px solid #334155;
-        margin: 30px 0;
-    }
-</style>
+        textarea{
+            width:100%;
+            min-height:140px;
+            resize:vertical;
+            padding:16px;
+            border-radius:14px;
+            border:1px solid rgba(255,255,255,.15);
+            background:#f8fafc;
+            color:#111827;
+            font-size:16px;
+            outline:none;
+        }
+
+        textarea:focus{
+            border-color:#38bdf8;
+            box-shadow:0 0 15px rgba(56,189,248,.35);
+        }
+
+        button{
+            margin-top:18px;
+            background:linear-gradient(90deg,#0ea5e9,#2563eb);
+            color:white;
+            border:none;
+            padding:14px 28px;
+            font-size:16px;
+            border-radius:12px;
+            cursor:pointer;
+            transition:.25s;
+            font-weight:600;
+        }
+
+        button:hover{
+            transform:translateY(-2px);
+            box-shadow:0 12px 25px rgba(37,99,235,.4);
+        }
+
+        .section-title{
+            margin:40px 0 20px;
+            color:#facc15;
+            font-size:30px;
+        }
+
+        .notes{
+            display:grid;
+            gap:18px;
+        }
+
+        .note{
+            background:rgba(255,255,255,.06);
+            border-left:5px solid #38bdf8;
+            border-radius:16px;
+            padding:20px;
+            transition:.25s;
+        }
+
+        .note:hover{
+            transform:translateY(-3px);
+            background:rgba(255,255,255,.08);
+        }
+
+        .date{
+            color:#38bdf8;
+            font-weight:bold;
+            margin-bottom:10px;
+            display:block;
+        }
+
+        .empty{
+            text-align:center;
+            padding:40px;
+            color:#94a3b8;
+            background:rgba(255,255,255,.05);
+            border-radius:16px;
+        }
+
+        @media(max-width:700px){
+
+            h1{
+                font-size:38px;
+            }
+
+            .card{
+                padding:22px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-<div style="
-    text-align:center;
-    font-size:12px;
-    color:#cbd5e1;
-    margin-top:-15px;
-    margin-bottom:20px;
-    opacity:0.8;
-">
-    K3S works
+
+<div class="container">
+
+    <div class="header">
+        <div class="status">
+            Kubernetes • Jenkins • Docker • Argo CD
+        </div>
+
+        <h1>Flask Notes</h1>
+
+        <p class="subtitle">
+            A simple notes application deployed through an automated DevOps pipeline.
+        </p>
+    </div>
+
+    <div class="card">
+        <h2>Project Status</h2>
+
+        <p>
+            ✅ Continuous Integration handled automatically by Jenkins using GitHub webhooks.
+        </p>
+
+        <p>
+            ✅ Containerized with Docker and deployed to Kubernetes.
+        </p>
+
+        <p>
+            ✅ Notes are stored in MySQL and displayed below.
+        </p>
+    </div>
+
+    <form method="POST">
+
+        <textarea
+            name="content"
+            placeholder="Write your note here..."
+            required
+        ></textarea>
+
+        <button type="submit">
+            Add Note
+        </button>
+
+    </form>
+
+    <h2 class="section-title">
+        Existing Notes
+    </h2>
+
+    {% if notes %}
+
+    <div class="notes">
+
+        {% for note in notes %}
+
+        <div class="note">
+
+            <span class="date">
+                {{ note.created_at }}
+            </span>
+
+            <p>
+                {{ note.content }}
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="empty">
+        No notes yet. Create your first note!
+    </div>
+
+    {% endif %}
+
 </div>
-<div style="
-    background: linear-gradient(90deg, red, orange);
-    color: white;
-    text-align: center;
-    padding: 25px;
-    font-size: 40px;
-    font-weight: bold;
-    border-radius: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 0 25px red;
-">
-    FULLY MONITORED
-</div>
-
-<h1>WORKKKKKKKKKKKK</h1>
-<div style="
-    background: #22c55e;
-    color: white;
-    text-align: center;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: bold;
-">
-    PLEASE WORK
-</div>
-    
-<div style="
-    background-color: rgba(255,255,255,0.1);
-    padding: 20px;
-    border-radius: 16px;
-    margin-bottom: 30px;
-    border: 2px solid #38bdf8;
-">
-    <h2>HOPING FOR THE BEST</h2>
-    <p>
-        WAITING FULL 5 MINUTES 
-    </p>
-
-    <p>
-        Jenkins rebuild happened automatically through GitHub webhook integration.
-    </p>
-
-    <p>
-        No manual Build Now button was pressed.
-    </p>
-</div>
-
-<form method="POST">
-    <textarea
-        name="content"
-        rows="4"
-        cols="50"
-        placeholder="Write a note..."
-        required
-    ></textarea>
-
-    <br><br>
-
-    <button type="submit">Add Note</button>
-</form>
-
-<hr>
-
-<h2>Existing Notes</h2>
-
-{% if notes %}
-<ul>
-    {% for note in notes %}
-    <li>
-        <strong>{{ note.created_at }}</strong><br>
-        {{ note.content }}
-    </li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No notes yet.</p>
-{% endif %}
 
 </body>
 </html>
