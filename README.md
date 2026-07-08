@@ -62,22 +62,6 @@ Developer                            │
 
 # 🛠 Tech Stack
 
-| Layer               | Technology       | 
-
-| ------------------- | ---------------- |
-| ☁️ Cloud            | AWS EC2          |
-| 🏗 Infrastructure   | Terraform        |
-| 🐳 Containerization | Docker           |
-| 📦 Registry         | Docker Hub       |
-| ⚙️ CI/CD            | Jenkins          |
-| ☸️ Orchestration    | Kubernetes (k3s) |
-| 📋 Package Manager  | Helm             |
-| 🔄 GitOps           | Argo CD          |
-| 📊 Monitoring       | Prometheus       |
-| 📈 Visualization    | Grafana          |
-| 🌐 Backend          | Flask            |
-| 🗄 Database         | MySQL            |
-| 🔀 Reverse Proxy    | Nginx            |
 <img width="1536" height="1024" alt="ChatGPT Image Jul 8, 2026, 02_47_52 PM" src="https://github.com/user-attachments/assets/df5aaaf2-4a84-4206-9823-05948885a475" />
 
 ---
